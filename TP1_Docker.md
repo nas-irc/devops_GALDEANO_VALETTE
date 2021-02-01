@@ -27,7 +27,21 @@ Astuce :
 - Si votre serveur postgresql ne veut pas se lancer car le port est déjà utilisé: lancez  `sudo systemctl stop postgresql`
 
 ### Init database
+
+1. Créer deux scripts sql (01-CreateScheme.sql et 02-InsertData.sql) et les placer dans le même dossier que le fichier Dockerfile.
+
+2. Ajouter les lignes suivantes au Dokerfile :
+```
+COPY 01-CreateScheme.sql /docker-entrypoint-initdb.d/
+COPY 02-InsertData.sql /docker-entrypoint-initdb.d/
+```
+Ces lignes permettent de copier les scripts dans le dossier `docker-entrypoint-initdb.d` et seront exécuter par ordre alphabétique au lancement du container.
+
+3. Lancer le docker avec la commande habituelle. On observe donc que la base de donnée est initialiser à la création du container.
+
 ### Persist data
+
+- Exécuter la commande `sudo docker run -p 5432:5432 --name mypostgres -v /my/own/datadir:/var/lib/postgresql/data vvalette/mypostgres` afin de créer un volume et de stoker les données de la base de données même si le container est supprimé. C'est l'option `-v /my/own/datadir:/var/lib/postgresql/data` qui permet cela.
 
 ---
 
