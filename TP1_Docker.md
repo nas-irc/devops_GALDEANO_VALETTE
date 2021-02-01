@@ -5,7 +5,6 @@
 ## Database
 ### Basics
 
-
 1. Créer un répertoir "tp_docker" par exemple se placer à l'intérieur avec la commande `cd tp_docker`. Puis, créer un fichier Dockerfile (avec la commande `touch Dockerfile`).
 
 2. Ouvrir celui-ci avec nano Dockerfile, et y écrire : 
@@ -47,6 +46,21 @@ Ces lignes permettent de copier les scripts dans le dossier `docker-entrypoint-i
 
 ## Backend API
 ### Basics
+
+1. Installer un jdk pour compiler et exécuter du java : `sudo apt install default-jdk`
+
+2. Créer un fichier Main.java contenant les lignes suivantes :
+```
+public class Main {
+public static void main (String[] args) {
+System. out .println( "Hello World!" ) ;
+}
+}
+```
+
+3. Le compiler avec la commande `javac Main.java`
+
+4. Exécuter l'exécutable avec la commande `java Main`
 ### Multistage build
 ### Backend API
 
