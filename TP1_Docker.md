@@ -252,4 +252,42 @@ Remarque : mybackend est le nom du container du server backend (API).
 
 ## Link application
 ### Docker-compose
+
+1. Installer docker-compose avec la commande `sudo apt install docker-compose`.
+
+2. Créer un fichier `docker-compose.yml` contenant les lignes suivantes : 
+```yml
+version: '2.2'
+services:
+    mybackend:
+        build: ./API/part3/simple-api/simple-api
+        networks:
+            - my_app_network
+        depends_on:
+            - mybdd
+    mybdd:
+        build: ./BDD
+        networks:
+            - "my_app_network"
+        volumes:
+            - /my/own/datadir:/var/lib/postgresql/data
+    httpd:
+        build: ./HTTP
+        ports:
+            - "80:80"
+        networks:
+            - my_app_network
+        depends_on:
+            - mybackend
+networks:
+ my_app_network:
+```
+
+Remarque : - l'attribut build doit contenir le chemin d'accès au Dockerfile de chaque application.
+	   - le nom du container créé est le répertoir + le nom du service (par exemple : tp_backend_mybackend)
+
+3. Lancer la commande `docker-compose up -d` et voila nos 3 containers sont déployés.
+
 ### Publish
+
+WIP
