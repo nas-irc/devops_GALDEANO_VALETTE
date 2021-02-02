@@ -57,11 +57,11 @@ Remarques :
 1. Installer un jdk pour compiler et exécuter du java : `apt install default-jdk`
 
 2. Créer un fichier Main.java contenant les lignes suivantes :
-```
+```java
 public class Main {
-public static void main (String[] args) {
-System. out .println( "Hello World!" ) ;
-}
+  public static void main (String[] args) {
+    System. out .println( "Hello World!" ) ;
+  }
 }
 ```
 
@@ -99,6 +99,63 @@ Remarque :
 - Packaging: Jar
 - Dependencies: Spring Web
 ```
+
+Puis récupérer le fichier générer et le dézipper.
+
+3. Se placer dans le dossier `simple-api/src/main/java/fr/takima/training/simpleapi` et rajouter un fichier java contenant les lignes suivantes :
+```java
+package fr.takima.training.simpleapi.controller;
+
+import org.springframework.web.bind.annotation.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+@RestController
+public class GreetingController {
+	private static final String template = "Hello, %s!" ;
+	private final AtomicLong counter = new AtomicLong();
+	@GetMapping ( "/" )
+	public Greeting greeting( @RequestParam (value = "name" , defaultValue = "World" ) String name) {
+		return new Greeting( counter .incrementAndGet(), String. format ( template , name));
+	}
+	class Greeting {
+		private final long id ;
+		private final String content ;
+		public Greeting( long id, String content) {
+			this . id = id;
+			this . content = content;
+		}
+		public long getId() {
+			return id ;
+		}
+		public String getContent() {
+			return content ;
+		}
+	}
+}
+```
+
+4. Ajouter un Dockerfile à la racine du projet contenant les lignes suivantes : 
+```
+# Build
+FROM maven:3.6.3-jdk-11 AS myapp-build
+ENV MYAPP_HOME /opt/myapp
+WORKDIR $MYAPP_HOME
+COPY pom.xml .
+COPY src ./src
+RUN mvn package -DskipTests
+
+# Run
+FROM openjdk:11-jre
+ENV MYAPP_HOME /opt/myapp
+WORKDIR $MYAPP_HOME
+COPY --from=myapp-build $MYAPP_HOME/target/*.jar $MYAPP_HOME/myapp.jar
+ENTRYPOINT java -jar myapp.jar
+```
+
+5. Exécuter la commande `docker build . -t vvalette/myapp` pour créer notre image.
+
+6. Exécuter la commande `docker run --name myapp --rm vvalette/myapp` pour lancer notre container.
+
 ### Backend API
 
 ---
