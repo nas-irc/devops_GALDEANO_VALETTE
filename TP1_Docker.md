@@ -181,12 +181,12 @@ spring:
     generate-ddl: false
     open-in-view: true
   datasource:
-    url: "jdbc:postgresql://172.18.0.2:5432/db"
+    url: "jdbc:postgresql://172.18.0.2:5432/db" 
     username: val
     password: val123
     driver-class-name: org.postgresql.Driver
 ```
-Remarque : On exécute la commande `docker network inspect my_app_network` afin de connaître l'adresse ip du container mybdd. Ici l'IP est 172.18.0.2.
+Remarque : On exécute la commande `docker network inspect my_app_network` afin de connaître l'adresse ip du container mybdd. Ici l'IP est 172.18.0.2. Cependant, il est préférable de renseigner le nom du container à la place de l'ip (ici mybdd).
 
 4. Créer l'image de l'application backend avec la commande `dockebuild . -t vvalette/mybackendapi`
 
@@ -222,8 +222,31 @@ Remarque : on peut utiliser les commandes : `docker stats`  pour regarder ce qu'
 
 ### Configuration
 
-On peut récupérer le fichier de configuration à l'aide de la commande `docker exec -t server cat /usr/local/apache2/conf/httpd.conf`
+On peut récupérer le fichier de configuration à l'aide de la commande `docker exec -t server cat /usr/local/apache2/conf/httpd.conf` (server étant le nom de notre container)
+
 ### Reverse proxy
+
+1. Créer un Dockerfile avec les lignes suivantes :
+```
+FROM httpd:2.4
+COPY httpd.conf /usr/local/apache2/conf/httpd.conf
+```
+
+2. Copier le fichier "httpd.conf" vu dans la partie Configuration. Décommenter les ligne `LoadModule log_config_module modules/mod_log_config.so` et `LoadModule env_module modules/mod_env.so` qui nous permettent d'ajouter les modules nécessaires. Puis, rajouter les lignes après la ligne ServerName:
+```
+ServerName localhost
+<VirtualHost *:80>
+ProxyPreserveHost On
+ProxyPass / http ://mybackend:8080/
+ProxyPassReverse / http://mybackend:8080/
+</VirtualHost>
+```
+
+Remarque : mybackend est le nom du container du server backend (API).
+
+3. Créer l'image (`docker build -t vvalette/httpd .`) et lancer le container `docker run --name reverse --rm -p 8080:80 --net=my_app_network vvalette/httpd`.
+
+4. On peut accéder à notre serveur backend via le reverse proxy
 
 ---
 
