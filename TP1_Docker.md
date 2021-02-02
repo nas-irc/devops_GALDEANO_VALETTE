@@ -61,7 +61,32 @@ System. out .println( "Hello World!" ) ;
 3. Le compiler avec la commande `javac Main.java`
 
 4. Exécuter l'exécutable avec la commande `java Main`
+
 ### Multistage build
+
+1. Créer un Dockerfile contenant les lignes suivantes : 
+```
+FROM openjdk: 11
+# Copy resource 
+COPY Main.java /usr/src/
+# Build Main.java
+RUN javac/usr/src/Main.java
+
+FROM openjdk:11-jre
+# Copy resource from previous stage
+COPY --from=0/usr/src/Main.class 
+# Run Main
+RUN java /usr/src/Main
+```
+
+2. Créer une application Springboot sur : https://start.spring.io/ en utilisant la configuration suivante :
+```
+- Project: Maven
+- Language: Java 11
+- Spring Boot: 2.2.4 : Cette version n'existe pas on a donc utilisé la version 2.4.2
+- Packaging: Jar
+- Dependencies: Spring Web
+```
 ### Backend API
 
 ---
