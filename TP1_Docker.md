@@ -15,15 +15,16 @@ ENV POSTGRES_DB=db POSTGRES_USER=val POSTGRES_PASSWORD=val123
 
 3. Exécuter la commande `sudo docker build . -t vvalette/mypostgres` (vvalette étant notre ussername dockercloud (docker ID) et mypostgres le nom de notre image). Notre image est alors créée sous le nom vvalette/mypostgres. (Attention à ne pas oublier le point dans la commande !)
 
-4. Dans un premier terminal, exécuter la commande `sudo docker run -p 5432:5432 --name mypostgres vvalette/mypostgres` afin de créer notre docker à partir de l'image précédemment créée
+4. Dans un premier terminal, exécuter la commande `sudo docker run -p 5432:5432 --name mypostgres vvalette/mypostgres` afin de créer notre container à partir de l'image précédemment créée. L'option `-p 5432:5432 (hôte:invité)` permet d'associer le port hôte au port invité. Cependant, il est déconseillé de le faire car il est plus sécurisé de ne pas avoir accès à la base de données directement.
 
-5. Pour accéder à notre BDD postgres on peut utiliser adminer. Pour cela, dans un second terminal, exéctuer la commande `sudo docker run --link mypostgres:db -p 8080:8080 adminer`. Ainsi `--link mypostgres:db` permet de linker adminer à notre container "mypostgres" créé précedemment.
+5. Pour accéder à notre BDD postgres on peut utiliser adminer. Pour cela, dans un second terminal, exéctuer la commande `sudo docker run --link mypostgres:db -p 8080:8080 adminer`. On aurai aussi pu utiliser l'option `-d` lors du lancement du container mypostgres. Celle-ci permet de lancer le container en mode détaché (arrière plan). Ainsi `--link mypostgres:db` permet de linker adminer à notre container "mypostgres" créé précedemment. Cependant, l'option link est utilisée uniquement dans ce cas la avec adminer pour du DEBUG. En PROD, il faudrait mettre les deux container dans le même network (docker network).
 
 6. Il ne manque plus qu'à se connecter à l'url : 127.0.0.1:8080 pour accèder à adminer, puis rentrer nos données de connexion à notre BDD. On peut donc enfin accèder à celle-ci.
 
-Astuce : 
+Remarques : 
 - Utiliser -e pour fournir les variables d'environnements afin d'éviter de les écrire en dur. Il faut donc exécuter la commande `sudo docker run -p 5432:5432 --name mypostgres -e POSTGRES_DB=db POSTGRES_USER=val POSTGRES_PASSWORD=val123 vvalette/mypostgres` sans oublier de régénérer l'image sans la ligne `ENV POSTGRES_DB=db POSTGRES_USER=val POSTGRES_PASSWORD=val123`
 - Si votre serveur postgresql ne veut pas se lancer car le port est déjà utilisé: lancez  `sudo systemctl stop postgresql`
+
 
 ### Init database
 
@@ -41,6 +42,10 @@ Ces lignes permettent de copier les scripts dans le dossier `docker-entrypoint-i
 ### Persist data
 
 - Exécuter la commande `sudo docker run -p 5432:5432 --name mypostgres -v /my/own/datadir:/var/lib/postgresql/data vvalette/mypostgres` afin de créer un volume et de stoker les données de la base de données même si le container est supprimé. C'est l'option `-v /my/own/datadir:/var/lib/postgresql/data` qui permet cela.
+
+Remarques :
+- Supprimer un container : `sudo docker fm -f {nom_container ou ID)`
+- Lister les container : `sudo docker ps -a`
 
 ---
 
