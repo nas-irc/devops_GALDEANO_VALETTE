@@ -156,6 +156,8 @@ ENTRYPOINT java -jar myapp.jar
 
 6. Exécuter la commande `docker run --name myapp --rm vvalette/myapp` pour lancer notre container.
 
+Remarque : Un `multistage build` est composé de plusieurs stage, souvent deux, le BUILD et le RUN. Il faut utiliser un `multistage build` car celui-ci nous permet de build (un fichier java par exemple) et de le run par la suite. Ce qui permet d'optimiser notre Dockerfile et donc notre image car celle-ci sera moins lourde et n'embarquera pas toutes les données nécessaire au BUILD mais seulement celle nécessaire au RUN. Avec les builds en plusieurs étpes, on utilise plusieurs instructions FROM dans notre Dockerfile. Chaque instruction FROM peut utiliser une base différente et chacune d'entre elles commence une nouvelle étape de build. On peut copier de manière sélective des artefacts d’une étape à une autre comme pour le COPY par exemple, laissant derrière vous tout ce que l'on ne veut pas dans l’image finale.
+
 ### Backend API
 
 ---
