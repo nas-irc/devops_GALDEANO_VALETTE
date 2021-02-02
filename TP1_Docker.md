@@ -32,7 +32,7 @@ Remarques :
 
 1. Créer deux scripts sql (01-CreateScheme.sql et 02-InsertData.sql) et les placer dans le même dossier que le fichier Dockerfile.
 
-2. Ajouter les lignes suivantes au Dokerfile :
+2. Ajouter les lignes suivantes au Dockerfile :
 ```
 COPY 01-CreateScheme.sql /docker-entrypoint-initdb.d/
 COPY 02-InsertData.sql /docker-entrypoint-initdb.d/
