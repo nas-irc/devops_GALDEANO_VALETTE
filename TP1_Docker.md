@@ -190,9 +190,9 @@ Remarque : On exécute la commande `docker network inspect my_app_network` afin 
 
 4. Créer l'image de l'application backend avec la commande `dockebuild . -t vvalette/mybackendapi`
 
-5. On lance le container BACKEND dans le même network que le container BDD à l'aide de la commande suivante : `dockn --name mybackend --net=my_app_network --rm -p 8080:8080 vvalette/mybackendapi`. 
+5. On lance le container BACKEND dans le même network que le container BDD à l'aide de la commande suivante : `docker run --name mybackend --net=my_app_network --rm -p 8080:8080 vvalette/mybackendapi`. 
 
-6. On peut alors accéder au données de notre BDD grâce à l'api. Par exemple, "http://localhost:8080/departments/IRC/students", nous renvoi le json suivant : 
+6. On peut alors accéder au données de notre BDD grâce à l'api. Par exemple, "http://localhost:8080/departments/IRC/students" nous renvoi le json suivant : 
 ```json
 [
  {"id":1,"name":"IRC"},
@@ -205,7 +205,24 @@ Remarque : On exécute la commande `docker network inspect my_app_network` afin 
 
 ## Http server
 ### Basics
+
+1.Créer un Dockerfile contenant les lignes suivantes : 
+
+```
+FROM httpd:2.4
+COPY ./public-html/ /usr/local/apache2/htdocs/
+```
+Remarque : le dossier public-html contient les fichier .html (dans notre exemple le fichier index.html)
+
+2.Créer une image (`docker build . -t vvalette/http`) et lancer le container avec la commande `docker run --rm --name server -it -p 8080:80 vvalette/http`. On peut alors accéder à notre server web à l'adresse localhost:8080.
+
+Remarque : on peut utiliser les commandes : `docker stats`  pour regarder ce qu'il se passe dans notre container.
+					    `docker inspect`
+					    `docker logs`
+
 ### Configuration
+
+On peut récupérer le fichier de configuration à l'aide de la commande `docker exec -t server cat /usr/local/apache2/conf/httpd.conf`
 ### Reverse proxy
 
 ---
