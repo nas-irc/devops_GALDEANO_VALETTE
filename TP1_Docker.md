@@ -160,6 +160,47 @@ Remarque : Un `multistage build` est composé de plusieurs stage, souvent deux, 
 
 ### Backend API
 
+1. Créer un network qui va contenir nos deux container : le container BACKEND et le container BDD. Pour cela exécuter la commande `docker network create -d bridge my_app_network`. On a donc un network nommé "my_app_network" qui est créé.
+
+Remarque : On peut lister les networks existant avec la commande `docker network ls`. De plus on peut obtenir des informations sur un network avec la commande `docker network inspect my_app_network`
+
+2. Télécharger et dézipper le fichier https://github.com/takima-training/sample-application-students/releases/download/simple-api/simple-api.zip
+
+3. Lancer le container de la BDD avec l'image créée dans la partie précédente (Database) avec la commande `docker run --name mybdd --net=my_app_network --rm -v /my/own/datadir:/var/lib/postgresql/data vvalette/mypostgres`. L'option `--net=my_app_network` permet d'ajouter notre container à notre network créé précédemment.
+
+
+4. Modifier le fichier `simple-api/src/main/resources/application.yml` avec les informations de connexions à la BDD
+```
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    generate-ddl: false
+    open-in-view: true
+  datasource:
+    url: "jdbc:postgresql://172.18.0.2:5432/db"
+    username: val
+    password: val123
+    driver-class-name: org.postgresql.Driver
+```
+Remarque : On exécute la commande `docker network inspect my_app_network` afin de connaître l'adresse ip du container mybdd. Ici l'IP est 172.18.0.2.
+
+4. Créer l'image de l'application backend avec la commande `dockebuild . -t vvalette/mybackendapi`
+
+5. On lance le container BACKEND dans le même network que le container BDD à l'aide de la commande suivante : `dockn --name mybackend --net=my_app_network --rm -p 8080:8080 vvalette/mybackendapi`. 
+
+6. On peut alors accéder au données de notre BDD grâce à l'api. Par exemple, "http://localhost:8080/departments/IRC/students", nous renvoi le json suivant : 
+```json
+[
+ {"id":1,"name":"IRC"},
+ {"id":2,"name":"ETI"},
+ {"id":3,"name":"CGP"}
+]
+```
+
 ---
 
 ## Http server
