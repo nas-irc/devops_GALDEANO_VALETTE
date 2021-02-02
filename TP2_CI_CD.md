@@ -27,8 +27,23 @@ Et enfin de lancer l'appli en accédant à l'adresse http://localhost/ sur le na
 
 ## Setup Travis CI
 ### Register to Travis
+Pour accéder à travis CI avec le compte github, il faut aller sur https://travis-ci.com/signin et sélectionner github.
+
+Il faut ensuite autoriser Travis CI à accéder au repo forké précedemment. Celui-ci apparaîtra ensuite sur le volet à gauche "my repositories"
+
+
 
 ### First step into the CI world
+Pour commencer, il faut créer un fichier `.travis.yaml` à la racine du projet. Ce fichier permetrea de faire fonctionner Travis  CI (nous le verrons par la suite).
+
+Une fois le fichier créer, il faut exécuter les commandes suivantes : 
+```
+$git add .travis.yaml
+$git commit -m "init travis CI conf"
+$git push origin master
+```
+
+[Remember the differences between each technology. ?? ]
 ### Build and test your app
 
 ### First step into the CD world
