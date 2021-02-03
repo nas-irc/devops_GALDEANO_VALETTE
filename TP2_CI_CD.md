@@ -234,7 +234,7 @@ Effectuer un push !
 
 ### Goign further
 
-1.
+1. On rajoute une condition dans nos stages afin de déployer nos images Docker uniquement si on est sur la branch dev :
 ```yml
 stages :
  - "Build and Test"
