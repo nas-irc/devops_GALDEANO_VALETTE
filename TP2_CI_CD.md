@@ -99,7 +99,7 @@ logging:
 
 - La deuxième va fonctionner mais ne lancera rien pour le moment car aucun test n'a encore été créé coté front. On pourrait développer des tests unitaires avec jest ou encore moka.
 
-Pour lancer un "build & test" sur Travis CI, il faut effectuer un commit quelconque (modif de la vue par exemple) et aller vérifier.
+Pour lancer ces 2 étapes de "build & test" sur Travis CI, il faut effectuer un commit quelconque (modif de la vue par exemple) et aller vérifier.
 
 > Note : Lorsque'on écrit rien dans la partie script et que le langage est "java" alors si le projet a un fichier pom.xml dans la racine du référentiel mais pas de build.gradle, Travis CI construit le projet avec Maven 3:
 `test mvn -B`. Aussi si le projet inclut également le script wrapper mvnw dans la racine du référentiel, Travis CI l'utilise à la place: `./mvnw test -B`. Enfin, la commande par défaut ne génère pas de JavaDoc (-Dmaven.javadoc.skip = true).
@@ -169,8 +169,9 @@ cache :
 services :
  - docker
 ```
+2 étapes ajoutées : Package Backend et Package FrontEnd. Ces 2 étapes effectuent un `docker build` puis un `dockerpush` des 2 images.
 
-4. Ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables DOCKER_USERNAME et DOCKER_PASSWORD.
+4. Pour l'étape de connexion, il faut ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables DOCKER_USERNAME et DOCKER_PASSWORD.
 
 Ainsi, à chaque push sur la branche `dev`, le code va être (dans l'ordre) build, test, et deploy afin d'avoir une version fonctionelle de l'image docker en ligne et de pouvoir la réutiliser. 
 
@@ -248,7 +249,7 @@ On remarque qu'on a ajouté l'add-on sonarcloud ainsi que le "sonarScanner au mo
 
 4.Push le code !
 
-5. Aller sur https://sonarcloud.io/dashboard?id=vvalette_sample-application-students&branch=dev&resolved=false pour visualiser le résultat une fois que la pipeline Travis est terminée
+5. Aller sur https://sonarcloud.io/dashboard?id=vvalette_sample-application-students&branch=dev&resolved=false pour visualiser le résultat une fois que la pipeline Travis est terminée.
 
 ### Goign further
 
