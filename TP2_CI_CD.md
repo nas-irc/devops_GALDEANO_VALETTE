@@ -53,7 +53,7 @@ $git push origin master
 
 2. Créer une branche `dev` du projet avec les commandes suivantes : 
 ```
-git pull             => récupérer les dernier modif du master
+git pull             => récupérer les dernières modifications du master
 git checkout -b dev  => créer la branche et se placer dessus en local
 dit push origin dev  => pusher la branche sur github
 git status           => vérifier qu'on est bien sur le branche dev
