@@ -234,3 +234,10 @@ Effectuer un push !
 
 ### Goign further
 
+1.
+```yml
+stages :
+ - "Build and Test"
+ - name: "Package"
+    if: branch = dev
+```
