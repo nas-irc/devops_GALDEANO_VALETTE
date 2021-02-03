@@ -83,6 +83,59 @@ git checkout -b dev  => créer la branche et se placer dessus en local
 dit push origin dev  => pusher la branche sur github
 git status           => vérifier qu'on est bien sur le branche dev
 ```
+
+3. Modifier le fichier .travis.yml :
+```yml
+git :
+ depth : 5
+
+stages :
+ - "Build and Test"
+ - "Package"
+ 
+jobs :
+ include :
+ - stage : "Build and Test"
+   language : java
+   jdk : oraclejdk11
+   before_script :
+    - cd sample-application-backend
+   script :
+   - echo "Maven build"
+   - echo "Run test coverage and Quality Gate"
+ - stage : "Build and Test"
+   language : node.js
+   node_js : "12.20"
+   before_script :
+    - cd sample-application-frontend
+   script :
+    - echo "NPM install and build"
+ - stage : "Package"
+   before_script :
+    - cd sample-application-backend
+   script :
+    - echo "Docker build ..."
+    - echo "Docker login ..."
+    - echo "Docker push ..."
+ - stage : "Package"
+   before_script :
+    - cd sample-application-frontend
+   script :
+    - echo "Docker build ..."
+    - echo "Docker login ..."
+    - echo "Docker push ..."
+    
+cache :
+ directories :
+  - "$HOME/.m2/repository"
+  - "$HOME/.npm"
+  
+services :
+ - docker
+```
+
+4. Ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables nécessaires
+
 ---
 
 ## Setup Quality Gate
