@@ -162,6 +162,8 @@ services :
 
 4. Ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables DOCKER_USERNAME et DOCKER_PASSWORD.
 
+Ainsi, à chaque push sur la branche `dev`, le code va être (dans l'ordre) build, test, et deploy afin d'avoir une version fonctionelle de l'image docker en ligne et de pouvoir la réutiliser. 
+
 ---
 
 ## Setup Quality Gate
