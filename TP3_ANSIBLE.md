@@ -10,7 +10,7 @@ $ sudo apt install software-properties-common
 $ sudo apt-add-repository --yes --update ppa:ansible/ansible
 $ sudo apt install ansible
 ```
-- Tester la connexion au serveur : `ansible all -m ping --private-key=<path_to_your_ssh_key> -u centos` (`--become` permettrait d'exécuter quelque chose en root sur le server)
+
 ## Intro
 
 ### Setup
@@ -35,6 +35,8 @@ Il utilise des points de terminaison HTTP ou des beans JMX pour nous permettre d
 ### Inventories
 
 1. Créer un dossier `tp_ansible/ansible/inventories` et y ajouter `setup.yml`
+
+Remarque : si on un problème de connexion il faut ajouter 
 ### Facts
 
 
