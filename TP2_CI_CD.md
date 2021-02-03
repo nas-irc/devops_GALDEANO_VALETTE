@@ -168,6 +168,13 @@ Ainsi, à chaque push sur la branche `dev`, le code va être (dans l'ordre) buil
 
 ## Setup Quality Gate
 ### What is quality about ?
+
+
+La 'Quality' est là pour vous assurer que votre code sera maintenable et déterminer chaque non sécurisé
+bloquer. Cela vous aide à produire des fonctionnalités mieux et testées, et cela évitera également d'avoir d
+code 'sale' poussé dans votre branche principale.
+Pour cela, nous allons utiliser SonarCloud, une solution cloud qui fait des analyses et des rapports de votre code. C'est un outil utile que tout le monde devrait utiliser pour apprendre les best-practices java.
 ### Register to sonarCloud
+Premièrement, créer cotre compte sur https://sonarcloud.io/ et le lier à votre compte github pour pouvoir analyser vos repos.
 ### Goign further
 
