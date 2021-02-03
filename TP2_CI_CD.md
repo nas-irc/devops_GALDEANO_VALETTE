@@ -134,7 +134,7 @@ services :
  - docker
 ```
 
-4. Ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables nécessaires
+4. Ajouter des variables d'environnement sur travis : More options > Settings > Environment Variables. Choisir le branche dev et ajouter les variables DOCKER_USERNAME et DOCKER_PASSWORD.
 
 ---
 
