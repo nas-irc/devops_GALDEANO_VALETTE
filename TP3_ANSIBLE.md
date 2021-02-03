@@ -68,15 +68,27 @@ all :
 2. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
 
 Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]` dans `/etc/ansible/ansible.cfg`. 
-`
+
 ### Facts
 
+On peut par exemple récupérer l'OS avec la commande suivante : `ansible all -i inventories/setup.yml -m setup -a "filter=ansible_distribution*"`
 
 ---
 
 ## Playbooks
 ### First playbook
 
+1. A la racine du projet créer un fichier ansible/playbook.yml :
+```yml
+- hosts : all
+  gather_facts : false
+  become : yes
+
+  tasks :
+  - name : Test connection
+    ping :
+```
+Celui ci permet de réaliser une multitude de commande ansible en les regroupandes pas tâches. Dans notre exemple, on réaliser un ping qui est contenu dans une tâche "Test connection"
 ### Advanced playbook
 
 ### Using roles
