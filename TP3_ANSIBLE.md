@@ -89,6 +89,9 @@ On peut par exemple récupérer l'OS avec la commande suivante : `ansible all -i
     ping :
 ```
 Celui ci permet de réaliser une multitude de commande ansible en les regroupandes pas tâches. Dans notre exemple, on réaliser un ping qui est contenu dans une tâche "Test connection"
+
+2. Lancer le playbook  avec la commande `ansible-playbook -i inventories/setup.yml playbook.yml`
+
 ### Advanced playbook
 
 ### Using roles
