@@ -30,13 +30,33 @@ C'est un moyen de surveiller notre application, collecter des métriques, compre
 
 Il utilise des points de terminaison HTTP ou des beans JMX pour nous permettre d'interagir avec lui.
  
+Par défaut, seulement les endpoints 'health' et 'info' sont accessibles. Pour en ajouter, il faut ajouter au fichier `sample-application-backend/src/main/resources/application.yml` la conf suivante : 
+
+```yml
+management:
+ server:
+  add-application-context-header: false
+ endpoints:
+  web:
+   base-path: /api/actuator
+   exposure:
+    include: health,info,env,metrics,beans,configprops,prometheus
+```
+Ainsi nous aurons accès aux endpoints suivants : 
+- health : The health endpoint provides detailed information about the health of the application.
+- info : The info endpoint provides general information about the application.
+- env : 	Returns list of properties in current environment
+- metrics : It shows several useful metrics information like JVM memory used, system CPU usage, open files, and much more.
+- beans : Returns a complete list of all the Spring beans in your application.
+- configprops : The configprops endpoint provides information about the application’s @ConfigurationProperties beans.
+- prometheus : The prometheus endpoint provides Spring Boot application’s metrics in the format required for scraping by a Prometheus server.
 
 
 ### Inventories
 
 1. Créer un dossier `tp_ansible/ansible/inventories` et y ajouter `setup.yml`
 
-2. Remplir le fichier de la manière suivante :
+1. A la racine du projet créer un fichier ansible/inventories/setup.yml: 
 ```yml
 all :
  vars :
@@ -44,11 +64,12 @@ all :
   ansible_ssh_private_key_file : inventories/SSH_KEY/valentin.valette
  children :
   prod :
-   hosts : 34.243.109.82
+   hosts : 34.243.109.82                     // or hostname //
 ```
 
 3. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
-Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]`. 
+
+Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]` dans `/etc/ansible/ansible.cfg`. 
 `
 ### Facts
 
