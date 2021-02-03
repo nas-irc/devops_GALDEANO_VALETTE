@@ -35,7 +35,8 @@ Il faut ensuite autoriser Travis CI à accéder au repo forké précedemment. Ce
 
 
 ### First step into the CI world
-Pour commencer, il faut créer un fichier `.travis.yaml` à la racine du projet. Ce fichier permetrea de faire fonctionner Travis  CI (nous le verrons par la suite).
+Pour commencer, il faut créer un fichier `.travis.yaml` à la racine du projet. Ce fichier permettra de faire fonctionner Travis  CI (s'il n'y en a pas, travis ignore les actions github) en lui décrivant les étapes à effectuer. La plupart des serrvices CI utilisent un fichier de ce type (sauf jenkins par exemple avec leurs fichiers Groovy).
+
 
 Une fois le fichier créer, il faut exécuter les commandes suivantes : 
 ```
@@ -44,7 +45,6 @@ $git commit -m "init travis CI conf"
 $git push origin master
 ```
 
-[Remember the differences between each technology. ?? ]
 ### Build and test your app
 
 Maintenant; il faut ajouter au fichier la conf suivante : 
@@ -58,19 +58,27 @@ jobs:
     jdk: oraclejdk11
     before_script:
     - cd sample-application-backend	
+    script :
+    - mvn clean verify
   - stage: "Build and Test Nodejs"
     language: node.js
     node_js: "12.20"
     before_script:
     - cd sample-application-frontend
+    script :
+    - npm install 
+    - npm build
+    - npm run test
 cache:
  directories:
   - "$HOME/.m2/repository"
   - "$HOME/.npm"
 ```
-On distingue dans cette configuration 2 "étapes de test : une pour tester le backend, et une pour tester le frontEnd.
+On distingue dans cette configuration 2 étapes de build & test :
 
-La première utilise la commande `mvn clean verify` (comment on sait ?) qui va build le code en suivant le fichier `pom.xml`. Or, dans ce même fichier, on retrouve la dépendance suivante : 
+- La première pour le backend utilise la commande `mvn clean verify` dans le dossier backend (car on la met dans le script). qui va build le code et executer les tests. 
+
+Nous avons besoin d'une base de données PostgreSQL pour exécuter les tests d'intégrations qui ont étés écrit. Nous pouvons le faire en utilisant les conteneurs de test Spring Boot. Pour les utiliser, nous devons insérer la dépendance 'embedded-postgresql' suivante :
 ```xml
 <dependency>
  <groupId>com.playtika.testcontainers</groupId>
@@ -89,9 +97,17 @@ logging:
     org.testcontainers.shaded.org.zeroturnaround.exec.ProcessExecutor: OFF
 ```
 
-La deuxième va fonctionner mais ne lancera rien pour le moment car aucun test n'a encore été créé coté front. On pourrait développer des tests unitaires avec jest ou encore moka.
+- La deuxième va fonctionner mais ne lancera rien pour le moment car aucun test n'a encore été créé coté front. On pourrait développer des tests unitaires avec jest ou encore moka.
 
-Pour lancer un "build & test" sur Travis CI, effectuer un commit quelconque (modif de la vue par exemple) et aller vérifier.
+Pour lancer un "build & test" sur Travis CI, il faut effectuer un commit quelconque (modif de la vue par exemple) et aller vérifier.
+
+> Note : Lorsque'on écrit rien dans la partie script et que le langage est "java" alors si le projet a un fichier pom.xml dans la racine du référentiel mais pas de build.gradle, Travis CI construit le projet avec Maven 3:
+`test mvn -B`. Aussi si le projet inclut également le script wrapper mvnw dans la racine du référentiel, Travis CI l'utilise à la place: `./mvnw test -B`. Enfin, la commande par défaut ne génère pas de JavaDoc (-Dmaven.javadoc.skip = true).
+
+
+> Note 2 : Lorsque'on écrit rien dans la partie script et que le langage est "node.js". Alors le script de build par défaut pour les projets utilisant nodejs est: `test npm`. Dans le cas où aucun fichier package.json n'est présent dans le dossier racine, le script de construction par défaut est: `make test`.
+
+
 
 ### First step into the CD world
 1. Créer un compte sur dockerhub : https://hub.docker.com/. Puis créer un répository (liée à notre compte github si possible)
@@ -228,9 +244,11 @@ addons :
   organization : "vvalette"
   token : "$SONARCLOUD_TOKEN"
 ```
-Effectuer un push !
+On remarque qu'on a ajouté l'add-on sonarcloud ainsi que le "sonarScanner au moment du `mvn clean verify`.
 
-4. Aller sur https://sonarcloud.io/dashboard?id=vvalette_sample-application-students&branch=dev&resolved=false pour visualiser le résultat une fois que la pipeline Travis est terminée
+4.Push le code !
+
+5. Aller sur https://sonarcloud.io/dashboard?id=vvalette_sample-application-students&branch=dev&resolved=false pour visualiser le résultat une fois que la pipeline Travis est terminée
 
 ### Goign further
 
