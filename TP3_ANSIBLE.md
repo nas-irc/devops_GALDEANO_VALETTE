@@ -36,7 +36,20 @@ Il utilise des points de terminaison HTTP ou des beans JMX pour nous permettre d
 
 1. Créer un dossier `tp_ansible/ansible/inventories` et y ajouter `setup.yml`
 
-Remarque : si on un problème de connexion il faut ajouter 
+2. Remplir le fichier de la manière suivante :
+```yml
+all :
+ vars :
+  ansible_user : centos
+  ansible_ssh_private_key_file : inventories/SSH_KEY/valentin.valette
+ children :
+  prod :
+   hosts : 34.243.109.82
+```
+
+3. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
+Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]`. 
+`
 ### Facts
 
 
