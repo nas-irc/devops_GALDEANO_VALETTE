@@ -228,6 +228,9 @@ addons :
   organization : "vvalette"
   token : "$SONARCLOUD_TOKEN"
 ```
+Effectuer un push !
+
+4. Aller sur https://sonarcloud.io/dashboard?id=vvalette_sample-application-students&branch=dev&resolved=false pour visualiser le résultat une fois que la pipeline Travis est terminée
 
 ### Goign further
 
