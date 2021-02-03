@@ -169,12 +169,81 @@ Ainsi, à chaque push sur la branche `dev`, le code va être (dans l'ordre) buil
 ## Setup Quality Gate
 ### What is quality about ?
 
-
 La 'Quality' est là pour vous assurer que votre code sera maintenable et déterminer chaque non sécurisé
 bloquer. Cela vous aide à produire des fonctionnalités mieux et testées, et cela évitera également d'avoir d
 code 'sale' poussé dans votre branche principale.
 Pour cela, nous allons utiliser SonarCloud, une solution cloud qui fait des analyses et des rapports de votre code. C'est un outil utile que tout le monde devrait utiliser pour apprendre les best-practices java.
+
 ### Register to sonarCloud
-Premièrement, créer cotre compte sur https://sonarcloud.io/ et le lier à votre compte github pour pouvoir analyser vos repos.
+
+1. Créer cotre compte sur https://sonarcloud.io/ et le lier à votre compte github pour pouvoir analyser vos repos.
+
+2. Ajouter votre clé SonnarCLoud à vos variable d'environnements (secure) de Travis.
+
+3. Modifier le .travis.yml :
+```yml
+git :
+ depth : 5
+
+stages :
+ - "Build and Test"
+ - "Package"
+ 
+jobs :
+ include :
+ - stage : "Build and Test"
+   language : java
+   jdk : oraclejdk11
+   before_script :
+    - cd sample-application-backend
+   script :
+   - echo "Maven build"
+   - echo "Run test coverage and Quality Gate"
+ - stage : "Build and Test"
+   language : node.js
+   node_js : "12.20"
+   before_script :
+    - cd sample-application-frontend
+   script :
+    - echo "NPM install and build"
+ - stage : "Package"
+   before_script :
+    - cd sample-application-backend
+   script :
+    - echo "Docker build ..."
+    - docker build -t vvalette/backend .
+    - echo "Docker login ..."
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - echo "Docker push ..."
+    - docker push vvalette/backend
+ - stage : "Package"
+   before_script :
+    - cd sample-application-frontend
+   script :
+    - echo "Docker build ..."
+    - docker build -t vvalette/frontend .
+    - echo "Docker login ..."
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - echo "Docker push ..."
+    - docker push vvalette/frontend
+ - stage : "Quality"
+   language : java
+   script :
+    - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=devops-2021
+
+cache :
+ directories :
+  - "$HOME/.m2/repository"
+  - "$HOME/.npm"
+  
+services :
+ - docker
+
+addons :
+ sonarcloud :
+  organization : "vvalette"
+  token : "$SONARCLOUD_TOKEN" 
+```
+
 ### Goign further
 
