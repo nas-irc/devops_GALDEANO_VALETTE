@@ -239,5 +239,5 @@ Effectuer un push !
 stages :
  - "Build and Test"
  - name: "Package"
-    if: branch = dev
+   if: branch = dev
 ```
