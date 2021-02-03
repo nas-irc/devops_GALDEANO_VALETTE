@@ -69,9 +69,29 @@ cache:
   - "$HOME/.npm"
 ```
 On distingue dans cette configuration 2 "étapes de test : une pour tester le backend, et une pour tester le frontEnd.
-La deuxième va fonctionner mais ne lancera rien pour le moment car aucun test n'a encore été créé coté front.
 
-Pour lancer un "build & test" sur Travis CI, effectuer un commit quelconque (modif de la vue par exemple).
+La première utilise la commande `mvn clean verify` (comment on sait ?) qui va build le code en suivant le fichier `pom.xml`. Or, dans ce même fichier, on retrouve la dépendance suivante : 
+```
+<dependency>
+ <groupId>com.playtika.testcontainers</groupId>
+ <artifactId>embedded-postgresql</artifactId>
+ <scope>test</scope>
+</dependency>
+```
+Qui va permettre de faire "pop-up" un conteneur de test "base de données" selon le fichier `src/test/resources/bootstrap.yml` suivant : 
+```
+embedded:
+  postgresql:
+    dockerImage: "postgres:12.0"
+
+logging:
+  level:
+    org.testcontainers.shaded.org.zeroturnaround.exec.ProcessExecutor: OFF
+```
+
+La deuxième va fonctionner mais ne lancera rien pour le moment car aucun test n'a encore été créé coté front. On pourrait développer des tests unitaires avec jest ou encore moka.
+
+Pour lancer un "build & test" sur Travis CI, effectuer un commit quelconque (modif de la vue par exemple) et aller vérifier.
 
 ### First step into the CD world
 1. Créer un compte sur dockerhub : https://hub.docker.com/. Puis créer un répository (liée à notre compte github si possible)
