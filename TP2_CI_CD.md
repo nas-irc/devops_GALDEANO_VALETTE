@@ -172,7 +172,7 @@ Pour cela, nous allons utiliser SonarCloud, une solution cloud qui fait des anal
 
 1. Créer cotre compte sur https://sonarcloud.io/ et le lier à votre compte github pour pouvoir analyser vos repos.
 
-2. Ajouter votre clé SonnarCLoud à vos variable d'environnements (secure) de Travis.
+2. Ajouter votre clé SonnarCLoud à vos variable d'environnements (SONARCLOUD_TOKEN) de Travis.
 
 3. Modifier le .travis.yml :
 ```yml
