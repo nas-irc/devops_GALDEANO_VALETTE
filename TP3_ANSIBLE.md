@@ -54,8 +54,6 @@ Ainsi nous aurons accès aux endpoints suivants :
 
 ### Inventories
 
-1. Créer un dossier `tp_ansible/ansible/inventories` et y ajouter `setup.yml`
-
 1. A la racine du projet créer un fichier ansible/inventories/setup.yml: 
 ```yml
 all :
@@ -67,7 +65,7 @@ all :
    hosts : 34.243.109.82                     // or hostname //
 ```
 
-3. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
+2. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
 
 Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]` dans `/etc/ansible/ansible.cfg`. 
 `
