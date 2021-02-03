@@ -49,6 +49,17 @@ $git push origin master
 
 ### First step into the CD world
 
+1. Créer un compte sur dockerhub : https://hub.docker.com/. Puis créer un répository (liée à notre compte github si possible)
+
+2. Créer une branche `dev` du projet avec les commandes suivantes : 
+```
+git pull             => récupérer les dernier modif du master
+git checkout -b dev  => créer la branche et se placer dessus en local
+dit push origin dev  => pusher la branche sur github
+git status           => vérifier qu'on est bien sur le branche dev
+
+```
+
 ---
 
 ## Setup Quality Gate
