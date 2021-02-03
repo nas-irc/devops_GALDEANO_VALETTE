@@ -64,14 +64,34 @@ all :
   prod :
    hosts : 34.243.109.82                     // or hostname //
 ```
+> Note : Pour 'ansible_ssh_private_key_file' il est conseillé de mettre un chemin absolu car l'execution dépends de notre position courante dans l'arborescence.
 
 2. Tester la connexion avec la commande `ansible all -i inventories/setup.yml -m ping`
 
 Remarque : si on un problème de connexion il faut ajouter `host_key_checking = False` en dessous de `[defaults]` dans `/etc/ansible/ansible.cfg`. 
-
+`
 ### Facts
 
-On peut par exemple récupérer l'OS avec la commande suivante : `ansible all -i inventories/setup.yml -m setup -a "filter=ansible_distribution*"`
+Les facts Ansible sont des données liées à vos systèmes distants, y compris les systèmes d'exploitation, les adresses IP, les systèmes de fichiers attachés, etc.
+
+Pour requêter le serveur et avoir la distribution il faut utiliser le module `setup` avec un filtre de la manière suivante : 
+
+`$ ansible all -i inventories/setup.yml -m setup -a "filter=ansible_distribution*"` qui donne :
+```
+nasri.galdeano.takima.cloud | SUCCESS => {
+    "ansible_facts": {
+        "ansible_distribution": "CentOS",
+        "ansible_distribution_file_parsed": true,
+        "ansible_distribution_file_path": "/etc/redhat-release",
+        "ansible_distribution_file_variety": "RedHat",
+        "ansible_distribution_major_version": "7",
+        "ansible_distribution_release": "Core",
+        "ansible_distribution_version": "7.9",
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false
+}
+```
 
 ---
 
@@ -83,7 +103,6 @@ On peut par exemple récupérer l'OS avec la commande suivante : `ansible all -i
 - hosts : all
   gather_facts : false
   become : yes
-
   tasks :
   - name : Test connection
     ping :
