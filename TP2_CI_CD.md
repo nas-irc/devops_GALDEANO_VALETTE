@@ -121,34 +121,28 @@ jobs :
    before_script :
     - cd sample-application-backend
    script :
-   - echo "Maven build"
-   - echo "Run test coverage and Quality Gate"
+    - mvn clean verify
  - stage : "Build and Test"
    language : node.js
    node_js : "12.20"
    before_script :
     - cd sample-application-frontend
    script :
-    - echo "NPM install and build"
+    - npm install 
+    - npm build
  - stage : "Package"
    before_script :
     - cd sample-application-backend
    script :
-    - echo "Docker build ..."
     - docker build -t vvalette/backend .
-    - echo "Docker login ..."
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - echo "Docker push ..."
     - docker push vvalette/backend
  - stage : "Package"
    before_script :
     - cd sample-application-frontend
    script :
-    - echo "Docker build ..."
     - docker build -t vvalette/frontend .
-    - echo "Docker login ..."
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - echo "Docker push ..."
     - docker push vvalette/frontend
 
 cache :
@@ -197,52 +191,42 @@ jobs :
    before_script :
     - cd sample-application-backend
    script :
-   - echo "Maven build"
-   - echo "Run test coverage and Quality Gate"
+    - mvn clean verify sonar:sonar -Dsonar.projectKey=vvalette_sample-application-students
  - stage : "Build and Test"
    language : node.js
    node_js : "12.20"
    before_script :
     - cd sample-application-frontend
    script :
-    - echo "NPM install and build"
+    - npm install 
+    - npm build
  - stage : "Package"
    before_script :
     - cd sample-application-backend
    script :
-    - echo "Docker build ..."
     - docker build -t vvalette/backend .
-    - echo "Docker login ..."
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - echo "Docker push ..."
     - docker push vvalette/backend
  - stage : "Package"
    before_script :
     - cd sample-application-frontend
    script :
-    - echo "Docker build ..."
     - docker build -t vvalette/frontend .
-    - echo "Docker login ..."
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-    - echo "Docker push ..."
     - docker push vvalette/frontend
- - stage : "Quality"
-   language : java
-   script :
-    - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=devops-2021
 
 cache :
  directories :
   - "$HOME/.m2/repository"
   - "$HOME/.npm"
-  
+
 services :
  - docker
 
 addons :
  sonarcloud :
   organization : "vvalette"
-  token : "$SONARCLOUD_TOKEN" 
+  token : "$SONARCLOUD_TOKEN"
 ```
 
 ### Goign further
