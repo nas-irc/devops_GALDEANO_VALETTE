@@ -48,7 +48,7 @@ $git push origin master
 ### Build and test your app
 
 Maintenant; il faut ajouter au fichier la conf suivante : 
-```
+```yml
 git:
  depth: 5
 jobs:
@@ -71,7 +71,7 @@ cache:
 On distingue dans cette configuration 2 "étapes de test : une pour tester le backend, et une pour tester le frontEnd.
 
 La première utilise la commande `mvn clean verify` (comment on sait ?) qui va build le code en suivant le fichier `pom.xml`. Or, dans ce même fichier, on retrouve la dépendance suivante : 
-```
+```xml
 <dependency>
  <groupId>com.playtika.testcontainers</groupId>
  <artifactId>embedded-postgresql</artifactId>
@@ -79,7 +79,7 @@ La première utilise la commande `mvn clean verify` (comment on sait ?) qui va b
 </dependency>
 ```
 Qui va permettre de faire "pop-up" un conteneur de test "base de données" selon le fichier `src/test/resources/bootstrap.yml` suivant : 
-```
+```yml
 embedded:
   postgresql:
     dockerImage: "postgres:12.0"
@@ -135,21 +135,27 @@ jobs :
     - cd sample-application-backend
    script :
     - echo "Docker build ..."
+    - docker build -t vvalette/backend .
     - echo "Docker login ..."
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     - echo "Docker push ..."
+    - docker push vvalette/backend
  - stage : "Package"
    before_script :
     - cd sample-application-frontend
    script :
     - echo "Docker build ..."
+    - docker build -t vvalette/frontend .
     - echo "Docker login ..."
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     - echo "Docker push ..."
-    
+    - docker push vvalette/frontend
+
 cache :
  directories :
   - "$HOME/.m2/repository"
   - "$HOME/.npm"
-  
+
 services :
  - docker
 ```
