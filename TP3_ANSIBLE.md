@@ -62,7 +62,7 @@ all :
   ansible_ssh_private_key_file : inventories/SSH_KEY/valentin.valette
  children :
   prod :
-   hosts : 34.243.109.82                     // or hostname //
+   hosts : 34.243.109.82                     // or hostname valentin.valette.takima.cloud//
 ```
 > Note : Pour 'ansible_ssh_private_key_file' il est conseillé de mettre un chemin absolu car l'execution dépends de notre position courante dans l'arborescence.
 
@@ -191,7 +191,7 @@ On obtient donc un dosser ansible/roles/{nom_du_rôle}. Chaque dossier de rôle 
    - docker
 ```
 
-- Fichier roles/docker/tasks/mail.yml :
+- Fichier roles/docker/tasks/main.yml :
 ```yml
 - name : Install yum-utils
   yum :
@@ -259,13 +259,33 @@ Ici, on vient créer un container nommé `backend` avec l'image créer précéde
 
 Pour les autres rôles, on peut visualiser la totalité des fichiers de configuraton sur le git suivant : https://github.com/vvalette/sample-application-students (dans le dossier ansible).
 
+Une fois tous les rôles créés, notre playbook.ml ressemble à cela : 
+```yml
+- hosts : all
+  gather_facts : false
+  become : yes
+
+  roles :
+   - docker
+   - network
+   - database
+   - backend
+   - frontend
+```
+
+Remarque : il est important de créer les rôles dans un ordre logique et fonctionnel. Ainsi, des rôles ont besoin de fonctionnalités qui sont créer dans d'autres rôles.
+
 ---
 
 ## Deploy your app
 ---
 
+Il reste plus qu'à déployer notre application sur notre serveur distant à l'aide de la commande `ansible-playbook -i inventories/setup.yml playbook.yml`.
+
 ## Front
 ---
+
+Si tout fonctionne comme il faut, on peut joindre notre site grâce à l'url de notre serveur `valentin.valette.takima.cloud`. Tout est OK ! 
 
 ## Continuous deployment
 
