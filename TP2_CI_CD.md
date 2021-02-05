@@ -116,7 +116,7 @@ Pour lancer ces 2 étapes de "build & test" sur Travis CI, il faut effectuer un 
 ```
 git pull             => récupérer les dernières modifications du master
 git checkout -b dev  => créer la branche et se placer dessus en local
-dit push origin dev  => pusher la branche sur github
+git push origin dev  => pusher la branche sur github
 git status           => vérifier qu'on est bien sur le branche dev
 ```
 
