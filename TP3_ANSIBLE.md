@@ -111,10 +111,153 @@ Celui ci permet de réaliser une multitude de commande ansible en les regroupand
 
 2. Lancer le playbook  avec la commande `ansible-playbook -i inventories/setup.yml playbook.yml`
 
+Remarque : Le playbook permet de réaliser différentes tâches. Ici, on réalise uniquement un ping dans notre tâche `Test connection`
+
 ### Advanced playbook
+
+1. On créer maintenant un playbook un peu plus complexe qui va nous permettre d'installer docker : 
+```yml
+- hosts : all
+  gather_facts : false
+  become : yes
+tasks :
+   # Install
+  - name : Install yum-utils
+    yum :
+     name : yum-utils
+     state : latest
+
+  - name : Install device-mapper-persistent-data
+    yum :
+     name : device-mapper-persistent-data
+     state : latest
+
+  - name : Install lvm2
+    yum :
+     name : lvm2
+     state : latest
+
+  - name : Add Docker stable repository
+    yum_repository :
+     name : docker-ce
+     description : Docker CE Stable - $basearch
+     baseurl : https://download.docker.com/linux/centos/7/$basearch/stable
+     state : present
+     enabled : yes
+     gpgcheck : yes
+     gpgkey : https://download.docker.com/linux/centos/gpg
+
+  - name : Install Docker
+    yum :
+     name : docker-ce
+     state : present
+
+  - name : Install EPEL
+    yum :
+     name : epel-release
+     state : present
+
+  - name : Install pip
+    yum :
+     name : python-pip
+     state : present
+
+  - name : Install Docker module for python
+    pip :
+     name : docker
+
+  - name : Make sure Docker is running
+    service : name=docker state=started
+    tags : docker 
+```
+
+Ainsi, ce playbook réalise 9 tâches afin d'intaller Docker. Chaque tâche se voit attribuer un nom puis des actions à réaliser.
 
 ### Using roles
 
+L'utilisation des rôles permet de regrouper ensemble des tâches qui permettent de réaliser une partie importante de l'application à déployer. En effet, si toutes les tâches seraient regroupées dans le playbooks principal on ne s'y retrouverait plus.. Ainsi, on créer un rôles `docker`, `database`, `backend`, `frontend` et `network`.
+
+1. Créer les différents rôles avec la commande `ansible-galaxy init roles/docker`.
+
+On obtient donc un dosser ansible/roles/{nom_du_rôle}. Chaque dossier de rôle contient plusieurs dossiers et notamment un dossier task. Dans celui-ci on retrouve un fichier YAML (`main.yml`) qui nous permet de renseigner nos différente tâches. Pour le rôles docker on peut alors déplacer les tâches du playbook dans ce fichier et indiquer dans le playbook qu'il faut exécuter ce rôles docker : 
+
+- Fichier playbook.yml : 
+```yml
+- hosts : all
+  gather_facts : false
+  become : yes
+
+  roles :
+   - docker
+```
+
+- Fichier roles/docker/tasks/mail.yml :
+```yml
+- name : Install yum-utils
+  yum :
+   name : yum-utils
+   state : latest
+
+- name : Install device-mapper-persistent-data
+  yum :
+   name : device-mapper-persistent-data
+   state : latest
+
+- name : Install lvm2
+  yum :
+   name : lvm2
+   state : latest
+
+- name : Add Docker stable repository
+  yum_repository :
+   name : docker-ce
+   description : Docker CE Stable - $basearch
+   baseurl : https://download.docker.com/linux/centos/7/$basearch/stable
+   state : present
+   enabled : yes
+   gpgcheck : yes
+   gpgkey : https://download.docker.com/linux/centos/gpg
+
+- name : Install Docker
+  yum :
+   name : docker-ce
+   state : present
+
+- name : Install EPEL
+  yum :
+   name : epel-release
+   state : present
+
+- name : Install pip
+  yum :
+   name : python-pip
+   state : present
+
+- name : Install Docker module for python
+  pip :
+   name : docker
+
+- name : Make sure Docker is running
+  service : name=docker state=started
+  tags : docker
+   
+```
+
+3. Réaliser la même chose pour chaque roles. On peut prendre l'exemple du backend (ne pas oublier de rajouter les rôles dans le playbook):
+```yml
+- name: Run backend
+  docker_container: 
+   name: backend
+   image: vvalette/backend
+   networks: 
+    - name: my_app_network
+   env: 
+     SPRING_DATASOURCE_URL: "jdbc:postgresql://database:5432/SchoolOrganisation"
+```
+
+Ici, on vient créer un container nommé `backend` avec l'image créer précédemment et hébergée sur notre docker hub (`vallette/backend`). Puis, on relie notre container au network docker créer dans le roles network. Enfin, on rajoute une variabale d'environnement qui contient le lien pour joindre notre database qui sera contenu dans un autre container et créer elle aussi grâce à un rôle. 
+
+Pour les autres rôles, on peut visualiser la totalité des fichiers de configuraton sur le git suivant : https://github.com/vvalette/sample-application-students (dans le dossier ansible).
 
 ---
 
