@@ -289,3 +289,22 @@ Si tout fonctionne comme il faut, on peut joindre notre site grâce à l'url de 
 
 ## Continuous deployment
 
+1. Créer une nouvelle branche nommée `production` à partir de la branch `dev`.
+
+2. Rajouter dans le fichier `.travis.yml` le stage suivant :
+```yml
+ - name: "Deployment "
+   if: branch = production
+```
+
+Il s'exécutera uniquement si on est sur la branche production.
+
+3. Rajouter les actions à réaliser durant le stage :
+```yml
+  - stage : "Deployment"
+   before_script :
+    - cd sample-application-frontend/ansible
+   script :
+    - ansible-playbook -i inventories/setup.yml playbook.yml
+```
+ On vient donc uniquement déployer notre application grâce au playbook si on réalise un commit sur la branche production
